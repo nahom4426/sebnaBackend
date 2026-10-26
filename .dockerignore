@@ -13,3 +13,4 @@ secrets.properties
 .env.*
 docker-compose*.yml
 effective-pom.xml
+deploy/
