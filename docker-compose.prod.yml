@@ -1,0 +1,70 @@
+services:
+  postgres_db:
+    container_name: sebna_postgres_prod
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    networks:
+      - sebna_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  sebna_app:
+    container_name: sebna_app_prod
+    build: .
+    image: sebna
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_PROFILES_ACTIVE: prod
+      BE_PORT: 8993
+      medcoanalytics.app.jwtSecret: ${JWT_SECRET}
+      medcoanalytics.app.jwtExpirationMs: ${JWT_EXPIRATION_MS}
+      spring.mail.host: ${MAIL_HOST}
+      spring.mail.port: ${MAIL_PORT}
+      spring.mail.username: ${MAIL_USERNAME}
+      spring.mail.password: ${MAIL_PASSWORD}
+      spring.mail.properties.mail.smtp.auth: true
+      spring.mail.properties.mail.smtp.starttls.enable: true
+      mail.custom.sender.name: ${MAIL_SENDER_NAME}
+      aws.s3.access-key: ${AWS_ACCESS_KEY}
+      aws.s3.secret-key: ${AWS_SECRET_KEY}
+      aws.s3.bucket: ${AWS_BUCKET}
+      aws.s3.region: ${AWS_REGION}
+      afromessage.api.token: ${AFROMESSAGE_TOKEN}
+      afromessage.api.identifierId: ${AFROMESSAGE_IDENTIFIER_ID}
+      payment.api_key: ${PAYMENT_API_KEY}
+      payment.merchant_id: ${PAYMENT_MERCHANT_ID}
+      payment.return-url: ${PAYMENT_RETURN_URL}
+      payment.callback_checkout_url: ${PAYMENT_CALLBACK_URL}
+      payment.chapa_verify_url: ${PAYMENT_CHAPA_VERIFY_URL}
+      payment.chapa_verify_transfer_url: ${PAYMENT_CHAPA_VERIFY_TRANSFER_URL}
+      payment.chapa_transfer_request_url: ${PAYMENT_CHAPA_TRANSFER_URL}
+      payment.chapa_request_url: ${PAYMENT_CHAPA_REQUEST_URL}
+      chapa.direct_pay_url: ${CHAPA_DIRECT_PAY_URL}
+      chapa.SECRET_KEY: ${CHAPA_SECRET_KEY}
+    ports:
+      - "8993:8993"
+    networks:
+      - sebna_network
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+volumes:
+  postgres_volume:
+networks:
+  sebna_network:
+    driver: bridge

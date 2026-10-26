@@ -1,0 +1,45 @@
+services:
+  postgres_db:
+    container_name: sebna_postgres
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: sebna_user
+      POSTGRES_PASSWORD: sebna_pass
+      POSTGRES_DB: sebna
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    networks:
+      - sebna_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sebna_user -d sebna"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+  sebna_app:
+    container_name: sebna_app
+    build: .
+    image: sebna
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/sebna
+      SPRING_DATASOURCE_USERNAME: sebna_user
+      SPRING_DATASOURCE_PASSWORD: sebna_pass
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8993:8993"
+    networks:
+      - sebna_network
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+volumes:
+  postgres_volume:
+networks:
+  sebna_network:
+    driver: bridge
+
+
+

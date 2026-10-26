@@ -1,0 +1,15 @@
+target/
+.git/
+.github/
+.idea/
+.vscode/
+.mvn/
+*.iml
+*.log
+*.txt
+*.md
+secrets.properties
+.env
+.env.*
+docker-compose*.yml
+effective-pom.xml
