@@ -17,6 +17,11 @@ public class FirebaseConfig {
 //        FileInputStream serviceAccount =
 //                new FileInputStream("firebase-service-account.json");
         InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase-service-account.json");
+        // The key file is gitignored; without it, start anyway with push notifications disabled
+        if (serviceAccount == null) {
+            System.err.println("⚠️ firebase-service-account.json not found - Firebase push notifications are disabled");
+            return;
+        }
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();

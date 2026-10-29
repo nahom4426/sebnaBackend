@@ -7,6 +7,7 @@ import Medco.PremuimFinancing.Repository.User.FcmTokenRepository;
 import Medco.PremuimFinancing.Repository.User.UserRepository;
 import Medco.PremuimFinancing.Service.User.FcmTokenService;
 import Medco.PremuimFinancing.exception.BadRequestException;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -101,6 +102,10 @@ public class FcmTokenServiceImpl implements FcmTokenService {
 
             Message message = messageBuilder.build();
 
+            if (FirebaseApp.getApps().isEmpty()) {
+                System.err.println("⚠️ Firebase is not configured - notification not sent");
+                return;
+            }
             String response = FirebaseMessaging.getInstance().send(message);
             System.out.println("✅ Successfully sent message: " + response);
 
