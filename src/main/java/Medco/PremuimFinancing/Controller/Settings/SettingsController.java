@@ -32,7 +32,6 @@ public class SettingsController {
     }
 
     @GetMapping("/price-per-share")
-    @PreAuthorize("hasAuthority('ROLE_read_users')")
     public Map<String, BigDecimal> getPricePerShare() {
         return Map.of("pricePerShare", appSettingService.getPricePerShare());
     }

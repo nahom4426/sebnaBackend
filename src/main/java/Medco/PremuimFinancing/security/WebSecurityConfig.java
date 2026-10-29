@@ -67,6 +67,7 @@ public class WebSecurityConfig {
                                 "/api/sebna/users/password/checkResetCode"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
+                                "/api/sebna/settings/price-per-share",
                                 "/api/sebna/posts/landing",
                                 "/api/sebna/posts/*",
                                 "/api/sebna/post-comments/post/*",
