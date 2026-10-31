@@ -10,4 +10,6 @@ public interface EmailOutboxService {
     boolean retryLatestForUser(String userUuid, String emailType);
 
     boolean retryById(UUID outboxId);
+
+    String latestErrorForUser(String userUuid, String emailType);
 }

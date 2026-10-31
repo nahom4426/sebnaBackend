@@ -78,6 +78,7 @@ public class WebSecurityConfig {
                                 "/api/sebna/likes/post/*/user-liked"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
+                                "/api/sebna/contact",
                                 "/api/sebna/likes/*/toggle",
                                 "/api/sebna/comments/post/*"
                         ).permitAll()

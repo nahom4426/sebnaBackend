@@ -96,6 +96,13 @@ public class EmailOutboxServiceImpl implements EmailOutboxService {
         return emailOutboxRepository.findById(outboxId).map(this::retryInternal).orElse(false);
     }
 
+    @Override
+    public String latestErrorForUser(String userUuid, String emailType) {
+        return emailOutboxRepository.findTopByUserUuidAndEmailTypeOrderByCreatedAtDesc(userUuid, emailType)
+                .map(EmailOutbox::getLastError)
+                .orElse(null);
+    }
+
     private void sendNow(String toEmail, String subject, String bodyHtml) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);

@@ -565,8 +565,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<?> adminRetryWelcomePasswordEmail(String userUuid) {
         boolean ok = emailOutboxService.retryLatestForUser(userUuid, "WELCOME_PASSWORD");
         if (ok) return ResponseEntity.ok(new MessageResponse("Email sent successfully"));
+        String reason = emailOutboxService.latestErrorForUser(userUuid, "WELCOME_PASSWORD");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResponse("Email not sent. It is still queued or missing."));
+                .body(new MessageResponse(reason == null
+                        ? "Email not sent. No welcome email was found for this user."
+                        : "Email not sent: " + reason));
     }
 
     @Override
